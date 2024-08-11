@@ -1,88 +1,31 @@
+import uvicorn
 from fastapi import FastAPI
-from enum import Enum
+from APIs.home.view import home_router
+from APIs.project.view import project_router
+
+# from utils.common_utils import handle_exception
+# from data_class.general import CustomException
 
 
 
 
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World!"}
+app = FastAPI(title="Portfolio Backend")
 
 
-
-@app.get("/itemss/{item_id}")
-async def read_item(item_id: int):
-    return {"item_id": item_id}
+app.include_router(home_router)
+app.include_router(project_router)
 
 
 
-
-@app.get("/users/me")
-async def read_user_me():
-    return {"user_id": "the current user"}
-
-
-
-@app.get("/users/{user_id:path}")
-async def read_user(user_id: str):
-    return {"user_id": user_id}
-
-
-
-class ModelName(str, Enum):
-    alexnet = "alexnet"
-    resnet = "resnet"
-    lenet = "lenet"
-
-
-
-
-
-@app.get("/models/{model_name}")
-async def get_model(model_name: ModelName):
-    if model_name is ModelName.alexnet:
-        return {"model_name": model_name, "message": "Deep Learning FTW!"}
-
-    if model_name.value == "lenet":
-        return {"model_name": model_name, "message": "LeCNN all the images"}
-
-    return {"model_name": model_name, "message": "Have some residuals"}
-
-
-
-
-
-fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
-
-
-@app.get("/items/")
-async def read_item(skip: int = 0, limit: int = 10):
-    return fake_items_db[skip : skip + limit]
-
-
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: str, q: str = None):
-    if q:
-        return {"item_id": item_id, "q": q}
-    return {"item_id": item_id}
-
-
-
-
-
-from pydantic import BaseModel
-
-class Item(BaseModel):
-    name: str
-    description: str | None = None
-    price: float
-    tax: float | None = None
-
-
-@app.post("/items1/")
-async def create_item(item: Item):
-    return item
-
+if __name__ == "__main__":
+    uvicorn.run("run:app", host="0.0.0.0", port=8000, reload=True)
+    # custom_exception = CustomException(
+    #     error_msg = "my error msg",
+    #     data = {"key", "value"},
+    #     exception=str(ValueError),
+    #     trace=traceback.print_exc()
+    # )
+    # # print(custom_exception)
+    # ans = handle_exception(custom_exception)
+    # print("output", ans)
+    # print("type", type(ans))
