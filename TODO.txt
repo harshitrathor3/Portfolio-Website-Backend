@@ -1,0 +1,3 @@
+run server in docker without config.env file
+add branch protection in github
+host application
