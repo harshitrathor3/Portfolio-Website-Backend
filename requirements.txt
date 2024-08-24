@@ -1,2 +1,11 @@
 fastapi
 uvicorn
+# SQLAlchemy
+mysql-connector-python
+python-dotenv
+pytz
+# async-sqlalchemy
+asyncpg
+databases
+sqlalchemy[asyncio]
+asyncmy
