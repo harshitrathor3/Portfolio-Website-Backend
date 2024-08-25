@@ -22,3 +22,4 @@ EXPOSE 8000
 
 # Run the command to start the application
 CMD ["uvicorn", "run:app", "--host", "0.0.0.0", "--port", "8000"]
+# CMD ["tail", "-f", "/dev/null"]
