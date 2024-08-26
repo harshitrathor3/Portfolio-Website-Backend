@@ -14,9 +14,6 @@ RUN pip install --upgrade pip && \
 # Copy the rest of the application code into the container at /app
 COPY . .
 
-# Exclude the config_local.env file
-RUN rm -f config_local.env
-
 # Expose the port the app runs on
 EXPOSE 8000
 
