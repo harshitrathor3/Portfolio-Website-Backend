@@ -16,7 +16,6 @@ import platform
 
 
 async def update_visit_stats():
-    return {"status": str(platform.python_version())}, StatusCodes.SUCCESS.value
     IST = pytz.timezone('Asia/Kolkata')
     try:
         async with SessionLocal() as db:
