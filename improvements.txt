@@ -1,0 +1,13 @@
+API - 
+    home/hit_count
+
+    Firstly try to use ORM (previously worked with CRUD operation by wiritng queries) - done
+    tried to make the API async - failed
+    explored why failed than found that the CRUD operation should also be asynced if API needs to be async
+    Made the CRUD operation async - done (learned new thing)
+    async performance is not good because reading and writing the same database row is creating lot of conflicts.
+    ask chatgpt and found that an update operation (instead of read than write) can be lot optimized.
+    async performanceis improved - (worked for 50 users handling 10 users per second)
+    while testing it for 100 users, got 70% failure rate, bcz everytime max connection pool exceeding for that database
+    resolved that by setting up the max_connection pool as 5, but the average response time was increased to 9.5 seconds.
+    
