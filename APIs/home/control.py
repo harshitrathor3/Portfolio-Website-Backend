@@ -9,13 +9,14 @@ from Enum_data import StatusCodes
 from utils.common_utils import handle_exception
 from data_class.general import CustomException
 from APIs.home.models import SessionLocal, HitCount
-
+import platform
 
 
 # db = SessionLocal()
 
 
 async def update_visit_stats():
+    return {"status": str(platform.python_version())}, StatusCodes.SUCCESS.value
     IST = pytz.timezone('Asia/Kolkata')
     try:
         async with SessionLocal() as db:
