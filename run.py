@@ -18,5 +18,7 @@ app.include_router(project_router)
 
 
 if __name__ == "__main__":
+    import platform
+    print(platform.python_version())
     asyncio.run(db_preparation())
     uvicorn.run("run:app", host="0.0.0.0", port=8000, reload=True)
