@@ -3,13 +3,13 @@ from datetime import datetime
 
 import pytz
 from sqlalchemy import update
+from sqlalchemy.future import select
 
 from config import MYSQL_URL
 from Enum_data import StatusCodes
 from utils.common_utils import handle_exception
 from data_class.general import CustomException
-from APIs.home.models import SessionLocal, HitCount
-import platform
+from APIs.home.models import SessionLocal, HitCount, Testimonials
 
 
 # db = SessionLocal()
@@ -43,3 +43,41 @@ async def update_visit_stats():
         )
         exception_ans = handle_exception(custom_exception)
         return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
+
+
+
+async def fetch_testimonials():
+    result_list = []
+    try:
+        async with SessionLocal() as db:
+            async with db.begin():
+                stmt = (
+                    select(Testimonials)
+                )
+                res = await db.execute(stmt)
+
+                # TODO find way to directly get output as dictionary
+                result = res.scalars().all()
+                result_list = [
+                    {
+                        "s_no": row.s_no,
+                        "name": row.name,
+                        "designation": row.designation,
+                        "company": row.company,
+                        "feedback": row.feedback,
+                        "image_id": row.image_id
+                    }
+                    for row in result
+                ]
+                return result_list, StatusCodes.SUCCESS.value
+    except Exception as e:
+        custom_exception = CustomException(
+            error_msg="error while fetching testimonials",
+            data = {},
+            exception=str(e),
+            trace=traceback.format_exc()
+        )
+        exception_ans = handle_exception(custom_exception)
+        return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
+    finally:
+        await db.close()

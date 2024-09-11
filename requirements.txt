@@ -9,3 +9,4 @@ asyncpg
 databases
 sqlalchemy[asyncio]
 asyncmy
+cloudinary
