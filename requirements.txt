@@ -10,3 +10,4 @@ databases
 sqlalchemy[asyncio]
 asyncmy
 cloudinary
+python-multipart

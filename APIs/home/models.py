@@ -52,7 +52,7 @@ class Testimonials(Base):
     designation = Column(String(40), nullable=False)
     company = Column(String(30), nullable=False)
     feedback = Column(String(200), nullable=False)
-    image_id = Column(String(30), nullable=True)
+    image_url = Column(String(100), nullable=True)
 
 
 
