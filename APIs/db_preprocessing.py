@@ -46,3 +46,4 @@ async def insert_default_row_in_table():
 async def db_preparation():
     await create_tables(engine)
     await insert_default_row_in_table()
+
