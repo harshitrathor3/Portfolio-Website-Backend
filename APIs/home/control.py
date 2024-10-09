@@ -96,15 +96,15 @@ async def add_single_testimonial(testimonial_data: TestimonialFormat, image: Upl
                 if status_code != StatusCodes.CREATED.value:
                     print("image saving failed")
                     print("ans", ans)
-                
+
                 print("the image path is", image_operations.image_path)
-                
+
                 name_without_space = testimonial_data.name.replace(" ", "_")
                 image_id_in_db = name_without_space + "_" + str(random.randint(1, 9999))
                 ans, status_code = image_operations.upload_image(image_id_in_db)
                 image_url = None
                 if status_code == StatusCodes.CREATED.value:
-                    image_url = ans["secure_url"]
+                    image_url = ans.get("secure_url")
                 else:
                     print("image uploading failed")
                     print("ans", ans)
