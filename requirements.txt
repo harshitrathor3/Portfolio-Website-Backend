@@ -11,3 +11,7 @@ sqlalchemy[asyncio]
 asyncmy
 cloudinary
 python-multipart
+joblib
+opencv-python
+scikit-learn
+matplotlib
