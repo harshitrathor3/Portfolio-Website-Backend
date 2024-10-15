@@ -1,13 +1,14 @@
 import traceback
 
 import joblib
+import numpy as np
 from fastapi import UploadFile
 
 from Enum_data import StatusCodes
 from utils.image_utils import ImageUtils
 from data_class.general import CustomException
 from utils.common_utils import handle_exception
-from APIs.project.preprocess_ml_inputs import prepare_image_digit_classifier
+from APIs.project.preprocess_ml_inputs import prepare_image_digit_classifier, prepare_titanic_data
 
 
 
@@ -45,4 +46,23 @@ async def predict_digit_in_image(image: UploadFile):
         return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
     finally:
         image_operations.delete_local_saved_image()
+
+
+async def predict_titanic_survival(data):
+    try:
+        prepared_data = prepare_titanic_data(data)
+        titanic_survival_model = joblib.load("APIs/project/ml_models/titanic_forest_reg.joblib")
+        prediction = titanic_survival_model.predict(prepared_data)
+        print("prediction", prediction)
+
+        return int(np.round(prediction[0], 0)), StatusCodes.SUCCESS.value
+    except Exception as e:
+        custom_exception = CustomException(
+            error_msg="error while predicting titanic survival",
+            data = data,
+            exception=str(e),
+            trace=traceback.format_exc()
+        )
+        exception_ans = handle_exception(custom_exception)
+        return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
 

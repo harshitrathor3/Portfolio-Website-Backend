@@ -1,9 +1,11 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from fastapi import APIRouter, Form, File, UploadFile
 
 from Enum_data import StatusCodes
-from APIs.project.control import predict_digit_in_image
+from APIs.project.payload_structure import PassengerData
+from APIs.project.control import predict_digit_in_image, predict_titanic_survival
 
 project_router = APIRouter(prefix="/project", tags=["project"])
 
@@ -33,17 +35,21 @@ async def digit_classification(
 
     return JSONResponse({"output": output}, status_code)
 
+
+
 @project_router.post("/titanic-survival-prediction")
-def titanic_survival_prediction(
-    passenger_data: str = Form(...)
+async def titanic_survival_prediction(
+    passenger_data: PassengerData
 ):
     """
     Titanic Survival Prediction Project
     """
 
     print("passenger data", passenger_data)
+    passenger_dict = passenger_data.model_dump()
+    output, status_code = await predict_titanic_survival(passenger_dict)
 
-    return JSONResponse({"survival_probability": 0.85}, StatusCodes.SUCCESS.value)
+    return JSONResponse({"survival_probability": output}, status_code)
 
 
 @project_router.post("/california-housing-value-prediction")
