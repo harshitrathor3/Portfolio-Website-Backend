@@ -1,7 +1,11 @@
+import traceback
+
 import cv2
+import joblib
+import numpy as np
+import pandas as pd
 # from matplotlib import pyplot as plt
 
-import traceback
 from Enum_data import StatusCodes
 from data_class.general import CustomException
 from utils.common_utils import handle_exception
@@ -43,4 +47,35 @@ def prepare_image_digit_classifier(image_path):
         exception_ans = handle_exception(custom_exception)
         return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
 
+
+
+
+
+def prepare_titanic_data(data):
+    try:
+        ordinal_encoder = joblib.load("APIs/project/ml_models/titanic_ordinal_encoder_embarked_col.joblib")
+        sex = 1 if data['sex'].lower() == "male" else 0
+
+        embarked_df = pd.DataFrame(
+            [[data['embarked']]], columns=['Embarked']
+        )
+        print("embarked_df", embarked_df)
+
+        embarked_encoded = ordinal_encoder.transform(embarked_df)[0][0]
+        print("embarked_encoded", embarked_encoded)
+
+        input_data = np.array(
+            [[data['pclass'], sex, data['age'], data['sibsp'], data['parch'], embarked_encoded]]
+        )
+        print("input_data", input_data)
+        return input_data
+    except Exception as e:
+        custom_exception = CustomException(
+            error_msg="error while preparing titanic data",
+            data = {"data": data},
+            exception=str(e),
+            trace=traceback.format_exc()
+        )
+        exception_ans = handle_exception(custom_exception)
+        return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
 
