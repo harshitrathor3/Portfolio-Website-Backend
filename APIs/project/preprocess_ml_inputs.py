@@ -4,7 +4,8 @@ import cv2
 import joblib
 import numpy as np
 import pandas as pd
-# from matplotlib import pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
 
 from Enum_data import StatusCodes
 from data_class.general import CustomException
@@ -78,4 +79,31 @@ def prepare_titanic_data(data):
         )
         exception_ans = handle_exception(custom_exception)
         return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
+
+
+
+def prepare_image_horse_human_classifier(image_path):
+    try:
+        img = image.load_img(image_path, target_size=(300, 300))
+        # Convert the image to an array
+        img_array = image.img_to_array(img)
+        # Reshape the image to add an extra dimension (since the model expects batches)
+        img_array = np.expand_dims(img_array, axis=0)
+        # Rescale the pixel values
+        img_array /= 255.0
+
+        # print("img_array", img_array)
+        # input("check img_array")
+
+        return img_array
+    except Exception as e:
+        custom_exception = CustomException(
+            error_msg="error while predicting horse or human in image",
+            data = {"image": image_path},
+            exception=str(e),
+            trace=traceback.format_exc()
+        )
+        exception_ans = handle_exception(custom_exception)
+        return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
+
 
