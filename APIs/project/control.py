@@ -3,12 +3,13 @@ import traceback
 import joblib
 import numpy as np
 from fastapi import UploadFile
+import tensorflow as tf
 
 from Enum_data import StatusCodes
 from utils.image_utils import ImageUtils
 from data_class.general import CustomException
 from utils.common_utils import handle_exception
-from APIs.project.preprocess_ml_inputs import prepare_image_digit_classifier, prepare_titanic_data
+from APIs.project.preprocess_ml_inputs import prepare_image_digit_classifier, prepare_titanic_data, prepare_image_horse_human_classifier
 
 
 
@@ -65,4 +66,41 @@ async def predict_titanic_survival(data):
         )
         exception_ans = handle_exception(custom_exception)
         return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
+
+
+async def predict_horse_human_classifier(image: UploadFile):
+    try:
+        image_operations = ImageUtils(image)
+        ans, status_code = image_operations.save_image_locally()
+
+        if status_code != StatusCodes.CREATED.value:
+            print("image saving failed")
+            print("ans", ans)
+
+        print("the image path is", image_operations.image_path)
+        # input("check image path")
+
+        horse_human_classifier_model = tf.keras.models.load_model('APIs/project/ml_models/horse_human_classifier.keras')
+        preprocessed_image = prepare_image_horse_human_classifier(image_operations.image_path)
+
+        # Use the loaded model to predict the class (0 for horse, 1 for human)
+        prediction = horse_human_classifier_model.predict(preprocessed_image)
+        print("prediction", prediction)
+        output = "Horse" if prediction[0][0] < 0.5 else "Human"
+        # input("check prediction")
+
+        return output, StatusCodes.SUCCESS.value
+    except Exception as e:
+        custom_exception = CustomException(
+            error_msg="error while predicting horse human classifier",
+            data = {"image": image.filename},
+            exception=str(e),
+            trace=traceback.format_exc()
+        )
+        exception_ans = handle_exception(custom_exception)
+        return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
+    finally:
+        image_operations.delete_local_saved_image()
+
+
 

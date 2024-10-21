@@ -5,7 +5,7 @@ from fastapi import APIRouter, Form, File, UploadFile
 
 from Enum_data import StatusCodes
 from APIs.project.payload_structure import PassengerData
-from APIs.project.control import predict_digit_in_image, predict_titanic_survival
+from APIs.project.control import predict_digit_in_image, predict_titanic_survival, predict_horse_human_classifier
 
 project_router = APIRouter(prefix="/project", tags=["project"])
 
@@ -66,16 +66,17 @@ def california_housing_value_prediction(
 
 
 @project_router.post("/horse-human-classifier")
-def horse_human_classifier(
+async def horse_human_classifier(
     image_to_test: UploadFile = File(...)
 ):
     """
     Horse Human Classifier Project
     """
 
-    print("image", image_to_test)
+    # Assuming you have a function to predict horse or human in the image
+    output, status_code = await predict_horse_human_classifier(image_to_test)
 
-    return JSONResponse({"classification": "horse"}, StatusCodes.SUCCESS.value)
+    return JSONResponse({"output": output}, status_code)
 
 
 @project_router.post("/happy-sad-emoji-classifier")
