@@ -1,15 +1,30 @@
 import traceback
 
 import cv2
+import nltk
+import string
 import joblib
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+from nltk.corpus import stopwords
+from nltk.stem.porter import PorterStemmer
 from tensorflow.keras.preprocessing import image
 
 from Enum_data import StatusCodes
 from data_class.general import CustomException
 from utils.common_utils import handle_exception
+
+
+
+
+# Ensure necessary NLTK data is downloaded
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('stopwords')
+
+# Initialize PorterStemmer
+ps = PorterStemmer()
 
 
 
@@ -106,4 +121,28 @@ def prepare_image_horse_human_classifier(image_path):
         exception_ans = handle_exception(custom_exception)
         return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
 
+
+def preprocess_email(text):
+    text = text.lower()
+    text = nltk.word_tokenize(text)
+
+    y = []
+    for i in text:
+        if i.isalnum():
+            y.append(i)
+
+    text = y[:]
+    y.clear()
+
+    for i in text:
+        if i not in stopwords.words('english') and i not in string.punctuation:
+            y.append(i)
+
+    text = y[:]
+    y.clear()
+
+    for i in text:
+        y.append(ps.stem(i))
+
+    return " ".join(y)
 

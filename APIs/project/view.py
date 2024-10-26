@@ -5,7 +5,7 @@ from fastapi import APIRouter, Form, File, UploadFile
 
 from Enum_data import StatusCodes
 from APIs.project.payload_structure import PassengerData
-from APIs.project.control import predict_digit_in_image, predict_titanic_survival, predict_horse_human_classifier
+from APIs.project.control import predict_digit_in_image, predict_titanic_survival, predict_horse_human_classifier, predict_spam
 
 project_router = APIRouter(prefix="/project", tags=["project"])
 
@@ -90,4 +90,22 @@ def happy_sad_emoji_classifier(
     print("image", image_to_test)
 
     return JSONResponse({"classification": "happy"}, StatusCodes.SUCCESS.value)
+
+
+
+@project_router.post("/spam-email-detection")
+def spam_email_detection(
+    email: str = Form(...)
+):
+    """
+    Spam Email Detection
+    """
+
+    print("email", email)
+    # input("check email")
+
+    output, status_code = predict_spam(email)
+    return JSONResponse({"output": output}, status_code)
+
+
 

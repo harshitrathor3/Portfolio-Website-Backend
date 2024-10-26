@@ -9,7 +9,7 @@ from Enum_data import StatusCodes
 from utils.image_utils import ImageUtils
 from data_class.general import CustomException
 from utils.common_utils import handle_exception
-from APIs.project.preprocess_ml_inputs import prepare_image_digit_classifier, prepare_titanic_data, prepare_image_horse_human_classifier
+from APIs.project.preprocess_ml_inputs import prepare_image_digit_classifier, prepare_titanic_data, prepare_image_horse_human_classifier, preprocess_email
 
 
 
@@ -102,5 +102,40 @@ async def predict_horse_human_classifier(image: UploadFile):
     finally:
         image_operations.delete_local_saved_image()
 
+
+
+def predict_spam(email_body):
+    try:
+        # Load the saved TF-IDF vectorizer and voting classifier model
+        tfidf = joblib.load('APIs/project/ml_models/vectorizer.joblib')
+        voting_classifier = joblib.load('APIs/project/ml_models/spam_email_voting.joblib')
+        # input("models loaded")
+
+        # Preprocess the input email
+        preprocessed_email = preprocess_email(email_body)
+        print("preprocessed_email", preprocessed_email)
+        # input("check preprocessed_email")
+
+        # Transform the preprocessed email using the TF-IDF vectorizer
+        email_vector = tfidf.transform([preprocessed_email]).toarray()
+        print("email_vector", email_vector)
+        # input("check email_vector")
+
+        # Predict using the voting classifier model
+        prediction = voting_classifier.predict(email_vector)
+        print("prediction", prediction)
+        # input("check prediction")
+
+        # Return the prediction result
+        return "Spam" if prediction[0] == 1 else "Not Spam", StatusCodes.SUCCESS.value
+    except Exception as e:
+        custom_exception = CustomException(
+            error_msg="error while predicting spam in email",
+            data={"email_body": email_body},
+            exception=str(e),
+            trace=traceback.format_exc()
+        )
+        exception_ans = handle_exception(custom_exception)
+        return {"error": exception_ans}, StatusCodes.INTERNAL_SERVER_ERROR.value
 
 
