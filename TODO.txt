@@ -1,6 +1,8 @@
-run server in docker without config.env file
+run server in docker without config.env file = Done
 add branch protection in github
 host
-    - dev branch in render
+    - dev branch in render = Done
     - main branch in https://deta.space/
-
+create DB in mysql for testimonials
+    use cloudinary to upload and fetch images
+    

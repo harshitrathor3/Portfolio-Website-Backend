@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytz
-from sqlalchemy import Column, Integer, DateTime
+from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -41,6 +41,19 @@ class OneMore(Base):
     __tablename__ = "onemore"
     
     col = Column(Integer, primary_key=True, default=10)
+
+
+
+class Testimonials(Base):
+    __tablename__ = "testimonials"
+    
+    s_no = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(30), nullable=False)
+    designation = Column(String(40), nullable=False)
+    company = Column(String(30), nullable=False)
+    feedback = Column(String(200), nullable=False)
+    image_url = Column(String(100), nullable=True)
+
 
 
 
