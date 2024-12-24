@@ -37,7 +37,7 @@ def prepare_image_digit_classifier(image_path):
 
         # Convert to grayscale if needed
         image_resized = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
-        image_resized = cv2.bitwise_not(image_resized)
+        # image_resized = cv2.bitwise_not(image_resized)
 
 
         # Flatten the image into a 1D array if required
