@@ -23,8 +23,6 @@ async def fun():
 
 @project_router.post("/digit-classification")
 async def digit_classification(
-    key1: str = Form(...),
-    key2: str = Form(...),
     image_to_test: UploadFile = File(...)
 ):
     """
