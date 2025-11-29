@@ -11,3 +11,9 @@ API -
     while testing it for 100 users, got 70% failure rate, bcz everytime max connection pool exceeding for that database
     resolved that by setting up the max_connection pool as 5, but the average response time was increased to 9.5 seconds.
     
+
+
+
+    project/invisiblity-cloack
+    give user different color ranges so that he can quickly pick the color which he has right now.
+
